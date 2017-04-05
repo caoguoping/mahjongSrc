@@ -11,7 +11,7 @@ LoginScene.RESOURCE_FILENAME = "LoginScene.csb"
 
 function LoginScene:onCreate()
     printf("resource node = %s", tostring(self:getResourceNode()))
-    ContentManager:getInstance():test()
+    --ContentManager:getInstance():test()
 end
   
 function LoginScene:onEnter()
@@ -25,11 +25,17 @@ function LoginScene:onEnter()
     btnLogin:onClicked(
     function ()
         self:disableAllButtons()
-        local strUid = txUid:getString()
-        if #strUid == 0 then
-            strUid = tostring(1711514050 + math.random(1000000, 9000000))
+        --local strUid = txUid:getString()
+        --if #strUid == 0 then
+            --strUid = tostring(1711514050 + math.random(1000000, 9000000))
+            
+            local time1 = os.time()
+         
+            local time2 = math.random(1, 100)
+            local strUid  = tostring(time1 * 100 + time2)
+               
 
-        end
+       -- end
         dataMgr.myBaseData.uid = strUid
         print("strUid:"..strUid)
         self:startLogin(strUid)
@@ -54,7 +60,8 @@ function LoginScene:onEnter()
     function (  )
         self:disableAllButtons()
 
-        local strUid = "1811514032"
+        local strUid = "1819514032"
+        -- local strUid = "1811514032"
         dataMgr.myBaseData.uid = strUid
         print("strUid:"..strUid)
         self:startLogin(strUid)
@@ -86,6 +93,8 @@ function LoginScene:onEnter()
     self.btnFast3 = btnFast3
     self.btnFast4 = btnFast4
 
+
+
     --cgpTest
     -- local strUid = "1711514223"
     -- dataMgr.myBaseData.uid = strUid
@@ -95,14 +104,26 @@ function LoginScene:onEnter()
     --layerMgr:showLayer(layerMgr.layIndex.MainLayer)
 
 --testBegin
+    -- print("\n\n#####      test start       #####\n\n")
 
+    -- local time1 = os.time()
+    -- print("random time "..time1)
+    -- local time2 = math.random(1000000, 9000000)
+    -- print("random math "..time2)
 
+    -- print(fxString[2])
 
-    -- print("\n\n#####                      test start               #####\n\n")
-    -- local test = girl.getBitTable(131)
-    -- for i=1,8 do
-    --     print(" "..i.." "..test[i])
-    -- end
+    -- local jiesuanBox = import(".JiesuanBox",CURRENT_MODULE_NAME).create()
+    -- jiesuanBox:initData(gameEndData)
+    -- layerMgr.boxes[layerMgr.boxIndex.JiesuanBox] = jiesuanBox
+
+       -- function ( )
+        --     self:removeFromParent()
+        -- end, 
+        -- function (  )
+        --     self:removeFromParent()
+        -- end)
+
 
  --testEnd 
 

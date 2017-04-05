@@ -28,7 +28,7 @@ function NetWorkLogin:handleEventLogin( event)
     local rcv = DataRcv:create(event)
     local wMainCmd = rcv:readWORD()
     local wSubCmd = rcv:readWORD()
-    print("Login Main "..wMainCmd..", Sub "..wSubCmd)
+   -- print("Login Main "..wMainCmd..", Sub "..wSubCmd)
   
     if  wMainCmd == 0 then
         if  wSubCmd == 1 then

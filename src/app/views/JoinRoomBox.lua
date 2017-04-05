@@ -11,6 +11,14 @@ function JoinRoomBox:ctor()
     self.rootNode = rootNode
     rootNode:setPosition(display.center)
     layerMgr.LoginScene:addChild(self, 10000)
+
+--test
+    local txUid = rootNode:getChildByName("TextField_uid")
+
+--test end
+
+
+
     local btnClose = rootNode:getChildByName("Button_close")
     local imgMask = rootNode:getChildByName("Image_mask")
     imgMask:onClicked(
@@ -39,6 +47,7 @@ function JoinRoomBox:ctor()
         function (  )
             self.nowNum = self.nowNum + 1;
             self.txts[self.nowNum]:setString(tostring(i - 1))
+            self.txts[self.nowNum]:setVisible(true)
             self.roomNum[8 - self.nowNum] = i - 1
             
 --cgpTest   实际上是进入成功1,102后执行，这边只执行连接游戏
@@ -57,16 +66,54 @@ function JoinRoomBox:ctor()
     local btnReput = rootNode:getChildByName("Button_re")
     btnReput:onClicked(
         function (  )
-            
+            self:reputRoomNum()
         end
         )
 
     local btnDelete = rootNode:getChildByName("Button_delete")
     btnDelete:onClicked(
         function (  )
-            
+            if self.nowNum < 1 then
+               return
+            else
+
+                self.txts[self.nowNum]:setVisible(false)
+                self.nowNum = self.nowNum - 1;
+            end
+
         end
         )
+
+    local btnOk = rootNode:getChildByName("Button_Ok")
+    btnOk:onClicked(
+        function (  )
+
+            local strUid = txUid:getString()
+            if #strUid < 7 then
+                return
+            else
+                dataMgr.roomSet.dwRoomNum = tonumber(strUid)
+                self.readRoomNum = dataMgr.roomSet.dwRoomNum 
+                self:startGame(netTb.ip, netTb.port.game, netTb.SocketType.Game) 
+            end
+ 
+
+        end
+        )
+
+--关闭点击按钮
+--test
+    --dataMgr.roomSet.dwRoomNum = 0
+    --self:startGame(netTb.ip, netTb.port.game, netTb.SocketType.Game) 
+--test End
+end
+
+function JoinRoomBox:reputRoomNum(  )
+    self.roomNum = {}  --7位数
+    self.nowNum = 0  --已输入的房间位数
+    for i=1,7 do
+        self.txts[i]:setVisible(false)
+    end
 end
 
 function JoinRoomBox:startGame(ip, port)
@@ -79,8 +126,15 @@ function JoinRoomBox:startGame(ip, port)
     local szPassword = uid
     local szMachineID = uid
     local wKindID = 3
-    local wTable = self.readRoomNum % 65536
-    local wChair = (self.readRoomNum - wTable)/ 65536     
+    
+--关闭点击按钮
+--test
+     local wTable = self.readRoomNum % 65536
+     local wChair = (self.readRoomNum - wTable)/ 65536    
+
+   -- local wTable = 0
+   -- local wChair = 0
+--test end
     --为密码，实际总的tableId为：wChair * 65536 + wTable
     --创建房间发满的，加入房间发实际的
 

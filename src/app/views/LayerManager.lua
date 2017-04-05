@@ -20,6 +20,8 @@ function LayerManager:inits( )
 	self.Layers[2] = nil
 	self.boxes = {}
 	self.boxes[1] = nil
+	self.boxes[2] = nil
+	self.boxes[3] = nil
 
 end
 
@@ -31,6 +33,7 @@ LayerManager.layIndex = table.enumTable({
 LayerManager.boxIndex = table.enumTable({
 	"CreateRoomBox",
 	"JoinRoomBox",
+	"JiesuanBox",
 
 })
 

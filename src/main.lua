@@ -7,6 +7,7 @@ cc.FileUtils:getInstance():addSearchPath("res/cardPng")
 cc.FileUtils:getInstance():addSearchPath("res/csbLobby")
 cc.FileUtils:getInstance():addSearchPath("res/csbPlay")
 cc.FileUtils:getInstance():addSearchPath("res/actionsCsb")
+cc.FileUtils:getInstance():addSearchPath("res/sound")
 
 require "config"
 require "cocos.init"

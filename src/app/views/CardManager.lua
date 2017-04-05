@@ -18,183 +18,16 @@ end
 
 function CardManager:inits( )
 	self.handCards = {}
+
 	self.cardDraw = nil    --抓的牌 node
 	self.whichTouch = nil
 	self.stndMeCnt = nil
 
 end
 
-function CardManager:hideAllCards(  )
-    for i=1,4 do
-        self.wallNode[i]:setVisible(false)
-        self.stndNode[i]:setVisible(false)
-        self.outNode[i]:setVisible(true)
-        self.pengNode[i]:setVisible(true)
-    end
-
-    --打出牌
-    for i = 1, 4 do
-        for j = 1, 24 do
-            self.outCell[i][j]:setVisible(false)
-        end
-    end
-
-    --碰牌
-    for  i = 1,4 do
-        self.pengCell[i][5]:setVisible(false)
-        self.pengCell[i][6]:setVisible(false)
-        for j = 1, 4 do
-            for k = 1, 4 do
-                self.pengCell[i][j][k]:setVisible(false)
-            end
-        end
-    end
-    self.stndNodeMeBei:setVisible(false)
-end
-
---自己抓牌后打牌
-function CardManager:outDrawCard(sn  )
-	local outIndex = sn - cardDataMgr.pengNum[1] * 3    --打出的手牌第几张，去掉了碰  
-	local handCount = 13 - cardDataMgr.pengNum[1] * 3    --手牌的张数，去掉了碰等和进的一张牌
-	local outValueSave = 0
-
-    self.nodeDachu[1]:setVisible(true)
-    --出最后一张
-	if sn == 14 then
-		outValueSave = self.cardDraw.cardValue
-		self.imgBigDachu[1]:loadTexture(outValueSave..".png")
-		local delay1 = cc.DelayTime:create(0.4)
-    	local delay2 = cc.DelayTime:create(0.4)
-        local action = cc.Sequence:create(delay1, 
-			delay2,
-        	cc.CallFunc:create(
-            function ()
-            	self.nodeDachu[1]:setVisible(false)
-            	cardDataMgr.outNum[1] = cardDataMgr.outNum[1] + 1
-            	self.outCell[1][cardDataMgr.outNum[1]]:setVisible(true)
-            	self.outCellFace[1][cardDataMgr.outNum[1]]:loadTexture(outValueSave..".png")
-   			end)
-        )	
-        self.nodeDachu[1]:runAction(action)
-		self.cardDraw:removeFromParent()
-		self.cardDraw = nil
-
-	else
-    --打出非最后一张牌		
-		outValueSave = cardDataMgr.handValues[outIndex]
-		self.imgBigDachu[1]:loadTexture(outValueSave..".png")
-		local delay1 = cc.DelayTime:create(0.4)
-    	local delay2 = cc.DelayTime:create(0.4)
-        local action = cc.Sequence:create(delay1, 
-			cc.CallFunc:create(
-            function ()
-            	for i = outIndex, handCount - 1 do   --打出的节点早已移除，并前移了一位
-            		local action = cc.MoveBy:create(0.2, cc.p(-86, 0))
-
-            		self.handCards[i]:runAction(action) 
-            		print("\ni   "..i.."  handCards[i] value"..self.handCards[i].cardValue)
-            	end
-            	local insertIndex = girl.getTableSortIndex(cardDataMgr.handValues, self.cardDraw.cardValue)	
-				print("\n###### insert index ######"..insertIndex)
-
-            	for i = insertIndex, handCount - 1 do   --打出的节点早已移除，并前移了一位
-            		local action = cc.MoveBy:create(0.2, cc.p(86, 0))
-
-            		self.handCards[i]:runAction(action) 
-            	end
-
-            	local action1 = cc.MoveBy:create(0.2, cc.p(0, 113))
-            	local action2 = cc.MoveTo:create(0.3, cc.p(girl.posx[insertIndex], 113))
-            	local action3 = cc.MoveTo:create(0.3, cc.p(girl.posx[insertIndex], 0))
-
-            	self.cardDraw:runAction(cc.Sequence:create(action1,action2,action3))
-            	table.insert(self.handCards,  insertIndex, self.cardDraw)
-            	table.insert(cardDataMgr.handValues,  insertIndex, self.cardDraw.cardValue)
-            	self.cardDraw = nil
-            	print("\ntable size After"..#self.handCards.."  sn  "..sn)
-            	for i=1,#self.handCards do
-            		print("  "..self.handCards[i].cardValue)
-            	end
-
-   			end),
-			delay2,
-        	cc.CallFunc:create(
-            function ()
-            	--显示打出牌
-            	self.nodeDachu[1]:setVisible(false)
-            	cardDataMgr.outNum[1] = cardDataMgr.outNum[1] + 1
-            	self.outCell[1][cardDataMgr.outNum[1]]:setVisible(true)
-            	self.outCellFace[1][cardDataMgr.outNum[1]]:loadTexture(outValueSave..".png")
-   			end)
-        )	
-        self.nodeDachu[1]:runAction(action)
-		self.handCards[outIndex]:removeFromParent()
-		table.remove(self.handCards, outIndex)
-		table.remove(cardDataMgr.handValues,  outIndex)					
-	end
-	return outValueSave
-end
-
---自己碰后打牌
-function CardManager:outPengCard(sn  )
-	local outIndex = sn - cardDataMgr.pengNum[1] * 3    --打出的手牌第几张，去掉了碰  
-	local handCount = 14 - cardDataMgr.pengNum[1] * 3    --手牌的张数，去掉碰
-	local outValueSave = 0
-
-    self.nodeDachu[1]:setVisible(true)
-	--出最后一张
-	if sn == 14 then
-		outValueSave = self.handCards[handCount].cardValue
-		self.imgBigDachu[1]:loadTexture(outValueSave..".png")
-		local delay1 = cc.DelayTime:create(0.4)
-    	local delay2 = cc.DelayTime:create(0.4)
-        local action = cc.Sequence:create(delay1, 
-			delay2,
-        	cc.CallFunc:create(
-            function ()
-            	self.nodeDachu[1]:setVisible(false)
-            	cardDataMgr.outNum[1] = cardDataMgr.outNum[1] + 1
-            	self.outCell[1][cardDataMgr.outNum[1]]:setVisible(true)
-            	self.outCellFace[1][cardDataMgr.outNum[1]]:loadTexture(outValueSave..".png")
-   			end)
-        )	
-        self.nodeDachu[1]:runAction(action)
-		self.handCards[handCount]:removeFromParent()
-
-	else
-	--打出非最后一张牌		
-		outValueSave = cardDataMgr.handValues[outIndex]
-		self.imgBigDachu[1]:loadTexture(outValueSave..".png")
-		local delay1 = cc.DelayTime:create(0.4)
-    	local delay2 = cc.DelayTime:create(0.4)
-        local action = cc.Sequence:create(delay1, 
-    		cc.CallFunc:create(
-        	function ()
-            	for i = outIndex, handCount - 2 do   --打出的节点早已移除，并前移了一位
-            		self.handCards[i]:runAction(cc.MoveBy:create(0.2, cc.p(-86, 0))) 
-            	end
-            	self.handCards[handCount - 1]:runAction(cc.MoveBy:create(0.2, cc.p(-86-15, 0)))  --最后一位牌
-            end),
-			delay2,
-        	cc.CallFunc:create(
-            function ()
-            	self.nodeDachu[1]:setVisible(false)
-            	cardDataMgr.outNum[1] = cardDataMgr.outNum[1] + 1
-            	self.outCell[1][cardDataMgr.outNum[1]]:setVisible(true)
-            	self.outCellFace[1][cardDataMgr.outNum[1]]:loadTexture(outValueSave..".png")
-   			end)
-        )	
-        self.nodeDachu[1]:runAction(action)
-		self.handCards[outIndex]:removeFromParent()
-		table.remove(self.handCards, outIndex)
-		table.remove(cardDataMgr.handValues,  outIndex)					
-	end
-	return outValueSave
-end
-
 function CardManager:initAllNodes( param )
-	local rootNode = param.rootNode
-	self.wallNode = {}
+    local rootNode = param.rootNode
+    self.wallNode = {}
     self.stndNode = {}
     self.outNode = {}
     self.pengNode = {}
@@ -215,44 +48,48 @@ function CardManager:initAllNodes( param )
     self.touchSn = 0   --点击第几张牌
 
 --getTouchSn
-
+    self.imgTouchCard:setTouchEnabled(false)  --初次创建禁止触摸
     self.imgTouchCard:addTouchEventListener(
-	--[14]多15
-	function (sender, state )
-		
-		local sn = 0
-    	if state == 2 then
-    		self.imgTouchCard:setTouchEnabled(false)
-    		local touchEndPosX = sender:getTouchEndPosition().x
-    		if touchEndPosX < 1247 and touchEndPosX > 1161 then
-    			sn = 14
-    		else 
-    			sn = math.modf((touchEndPosX - 30) / 86) + 1
-    		end
-    		self.touchSn = sn
-    		if sn <= cardDataMgr.pengNum[1] * 3 then
-    			return
-    		end
+    --[14]多15
+    function (sender, state )
+        
+        local sn = 0
+        if state == 2 then
+            self.imgTouchCard:setTouchEnabled(false)
+            local touchEndPosX = sender:getTouchEndPosition().x
+            if touchEndPosX < 1280 and touchEndPosX > 1161 then
+                sn = 14
+            else 
+                sn = math.modf((touchEndPosX - 30) / 86) + 1
+            end
+            self.touchSn = sn
+            if sn <= cardDataMgr.pengGangNum[1] * 3 then
+                return
+            end
 
-			print("\nimgTouchCard posx end"..touchEndPosX.."  sn "..self.touchSn)
+            print("\nimgTouchCard posx end"..touchEndPosX.."  sn "..self.touchSn)
 
 
-			local outValueSave = 0
-			if cardDataMgr.outType == 0 then
-				outValueSave = self:outDrawCard(sn)
-			else
-				outValueSave = self:outPengCard(sn)
-			end
+            local outValueSave = 0
 
-			--[
-			local snd = DataSnd:create(200, 1)
-			snd:wrByte(outValueSave)
+            print("outType "..cardDataMgr.outType)
+            if cardDataMgr.outType == 0 then
+                outValueSave = self:outDrawCard(sn)
+            else
+                outValueSave = self:outPengCard(sn)
+            end
+            print("\n  outValueSave "..outValueSave)
+            cc.SimpleAudioEngine:getInstance():playEffect(outValueSave.."_L.mp3", false)
+
+            --[
+            local snd = DataSnd:create(200, 1)
+            snd:wrByte(outValueSave)
             snd:sendData(netTb.SocketType.Game)
             snd:release();
-			--]]
+            --]]
 
-			print("\ntable size "..#self.handCards.."  sn  "..sn)
-    	end
+            print("\ntable size "..#self.handCards.."  sn  "..sn)
+        end
     end)
 
 
@@ -293,32 +130,6 @@ function CardManager:initAllNodes( param )
         for j=1,4 do
             self.pengCell[i][j] = {}
             self.pengCellFace[i][j] = {}
-        end
-    end
--- --堆牌
-    -- for  i = 1,4 do
-    --     for j = 1,36 do
-    --         local imgName = "Image"..j
-    --         self.wallCell[i][j] =  self.wallNode[i]:getChildByName(imgName)
-    --     end
-    -- end
-    --堆牌
-    local sice1 = cardDataMgr.cardSend.bSice1
-    local sice2 = cardDataMgr.cardSend.bSice2
-	--cgpTest
-    sice1 = 3
-    sice2 = 4
-    local startDir = math.min(sice1, sice2)
-    local theSum = sice1 + sice2
-    local startIndex = (startDir - 1) * 36 + (theSum - 1) * 2  --相当于0
-    for  i = 1,4 do
-        for j = 1,36 do
-            local imgName = "Image"..j
-            local realPos = ((i - 1) * 36 + j - startIndex + 144) % 144
-            self.wallCell[realPos] =  self.wallNode[i]:getChildByName(imgName)
-
-
-            --print(realPos.." ")
         end
     end
 
@@ -365,34 +176,357 @@ function CardManager:initAllNodes( param )
 end
 
 
---抓一张牌
-function CardManager:drawCard(cardZhua )
-	local svrChair = cardZhua.wCurrentUser
-	local clientChair = dataMgr.chair[svrChair + 1]
-	if clientChair == 1 then  --自己
-		local cardv = cardZhua.cbCardData
-		self:createCardDraw(cardv)
-	else
-		self.stndCell[clientChair][14]:setVisible(true)
-	end
-	local outNum = cardDataMgr.totalOutNum + 1
+--刷新
+function CardManager:hideAllCards(  )
+    for i=1,4 do
+        self.wallNode[i]:setVisible(false)
+        self.stndNode[i]:setVisible(false)
+        self.outNode[i]:setVisible(true)
+        self.pengNode[i]:setVisible(true)
+    --打出的大牌
+    	self.nodeDachu[i]:setVisible(false)
+    end
 
-	self.wallCell[outNum]:setVisible(false)
-	cardDataMgr.totalOutNum = outNum
+    --打出牌
+    for i = 1, 4 do
+        for j = 1, 24 do
+            self.outCell[i][j]:setVisible(false)
+        end
+    end
+
+    --碰牌
+    for  i = 1,4 do
+        self.pengCell[i][5]:setVisible(false)
+        self.pengCell[i][6]:setVisible(false)
+        for j = 1, 4 do
+            for k = 1, 4 do
+                self.pengCell[i][j][k]:setVisible(false)
+            end
+        end
+    end
+
+    --结算后，更新时禁止触摸
+    self.stndNodeMeBei:setVisible(false)
+    self.imgTouchCard:setTouchEnabled(false)
+end
+
+--胡牌后删除手牌和抓的牌
+function CardManager:removeHandCards( )
+    for i=1,#self.handCards do
+        self.handCards[i]:removeFromParent()
+    end
+    if  self.cardDraw  then
+        self.cardDraw:removeFromParent()
+        self.cardDraw = nil
+    end
 
 end
 
---收到其他玩家出牌
+--自己抓牌后打牌
+function CardManager:outDrawCard(sn  )
+
+	local outValueSave = 0
+
+    self.nodeDachu[1]:setVisible(true)
+    --打出最后一张
+	if sn == 14 then
+		outValueSave = self.cardDraw.cardValue
+		self.imgBigDachu[1]:loadTexture(outValueSave..".png")
+        self.cardDraw:removeFromParent()
+        self.cardDraw = nil
+        local action = cc.Sequence:create(cc.DelayTime:create(0.8), 
+        	cc.CallFunc:create(
+            function ()
+            	self.nodeDachu[1]:setVisible(false)    --打出的打牌
+            	cardDataMgr.outNum[1] = cardDataMgr.outNum[1] + 1
+            	self.outCell[1][cardDataMgr.outNum[1]]:setVisible(true)
+            	self.outCellFace[1][cardDataMgr.outNum[1]]:loadTexture(outValueSave..".png")
+   			end)
+        )	
+        self.nodeDachu[1]:runAction(action)
+
+	else
+    --打出非最后一张牌	
+
+        local outIndex = sn - cardDataMgr.pengGangNum[1] * 3    --打出的是第几张手牌，去掉了碰 
+		outValueSave = cardDataMgr.handValues[outIndex]
+		self.imgBigDachu[1]:loadTexture(outValueSave..".png")
+
+        --删除打出牌
+        self.handCards[outIndex]:removeFromParent()
+        table.remove(self.handCards, outIndex)
+        table.remove(cardDataMgr.handValues,  outIndex) 
+ 
+        --local handCount = 13 - cardDataMgr.pengGangNum[1] * 3    --手牌的张数，去掉了碰等和进的一张牌    
+        local handCount = #self.handCards    --剩余手牌的张数，去掉了碰等和抓的一张牌以及打出的一张牌 
+        local insertIndex = nil
+
+        --打出节点的右边节点左移一位，不包括抓的牌
+        for i = outIndex, handCount do   
+            local actions = cc.Sequence:create(
+                cc.DelayTime:create(0.4), 
+                cc.MoveBy:create(0.2, cc.p(-86, 0))
+                )
+            self.handCards[i]:runAction(actions) 
+        end
+
+        --抓的牌进行插入操作
+        local insertIndex = girl.getTableSortIndex(cardDataMgr.handValues, self.cardDraw.cardValue) 
+        print("\n###### insert index ######"..insertIndex)
+
+        for i = insertIndex, handCount do   --待插入节点的右边（含）右移一位
+            local actions = cc.Sequence:create(
+                cc.DelayTime:create(0.4), 
+                cc.MoveBy:create(0.2, cc.p(86, 0))
+                )
+            self.handCards[i]:runAction(actions) 
+        end
+
+        --抓的牌
+        local action1 = cc.MoveBy:create(0.2, cc.p(0, 113))
+        local action2 = cc.MoveTo:create(0.3, cc.p(girl.posx[insertIndex + cardDataMgr.pengGangNum[1] * 3], 113))
+        local action3 = cc.MoveTo:create(0.3, cc.p(girl.posx[insertIndex + cardDataMgr.pengGangNum[1] * 3], 0))
+        self.cardDraw:runAction(cc.Sequence:create(
+            cc.DelayTime:create(0.4),
+            action1,
+            action2,
+            action3))
+
+
+        --打出的大牌节点
+        local actionDachu = cc.Sequence:create(
+            cc.DelayTime:create(0.8), 
+            cc.CallFunc:create(
+                function ()
+                    self.nodeDachu[1]:setVisible(false)    --打出的大牌
+                    cardDataMgr.outNum[1] = cardDataMgr.outNum[1] + 1
+                    self.outCell[1][cardDataMgr.outNum[1]]:setVisible(true)
+                    self.outCellFace[1][cardDataMgr.outNum[1]]:loadTexture(outValueSave..".png")
+                end)
+            )
+        self.nodeDachu[1]:runAction(actionDachu)
+
+        local action = cc.Sequence:create(
+            cc.DelayTime:create(1.0), 
+            cc.CallFunc:create(
+                function ()
+                    table.insert(self.handCards,  insertIndex, self.cardDraw)
+                    table.insert(cardDataMgr.handValues,  insertIndex, self.cardDraw.cardValue)
+                    self.cardDraw = nil 
+                end)
+        )
+        layerMgr:getLayer(layerMgr.layIndex.PlayLayer, params).deskBgNode:runAction(action)    
+	end
+	return outValueSave
+end
+
+--自己碰后打牌
+function CardManager:outPengCard(sn  )
+
+	local outIndex = sn - cardDataMgr.pengGangNum[1] * 3    --打出的手牌第几张，去掉了碰  
+	local handCount = 14 - cardDataMgr.pengGangNum[1] * 3    --手牌的张数，去掉碰
+	local outValueSave = 0
+
+
+    self.nodeDachu[1]:setVisible(true)
+	--打出最后一张
+	if sn == 14 then
+		outValueSave = self.handCards[handCount].cardValue
+		self.imgBigDachu[1]:loadTexture(outValueSave..".png")
+
+        --删除最后一张手牌
+        self.handCards[handCount]:removeFromParent()
+        table.remove(self.handCards, handCount)
+        table.remove(cardDataMgr.handValues,  handCount) 
+
+        --打出大牌和底牌
+        local action = cc.Sequence:create( 
+			cc.DelayTime:create(0.8),
+        	cc.CallFunc:create(
+            function ()
+            	self.nodeDachu[1]:setVisible(false)
+            	cardDataMgr.outNum[1] = cardDataMgr.outNum[1] + 1
+            	self.outCell[1][cardDataMgr.outNum[1]]:setVisible(true)
+            	self.outCellFace[1][cardDataMgr.outNum[1]]:loadTexture(outValueSave..".png")
+   			end)
+        )	
+        self.nodeDachu[1]:runAction(action)
+
+	else
+	--打出非最后一张牌		
+		
+        outValueSave = cardDataMgr.handValues[outIndex]
+		self.imgBigDachu[1]:loadTexture(outValueSave..".png")
+
+        --删除打出牌
+        self.handCards[outIndex]:removeFromParent()
+        table.remove(self.handCards, outIndex)
+        table.remove(cardDataMgr.handValues,  outIndex) 
+        handCount = handCount - 1    --手牌减一
+
+        --打出节点的右边节点左移一位，不包括最后一张牌
+        for i = outIndex, handCount - 1 do   
+            local actions = cc.Sequence:create(
+                cc.DelayTime:create(0.4), 
+                cc.MoveBy:create(0.2, cc.p(-86, 0))
+                )
+            self.handCards[i]:runAction(actions) 
+        end
+
+        --最后一张牌左移
+        local actionLast = cc.Sequence:create(
+                cc.DelayTime:create(0.4), 
+                cc.MoveBy:create(0.2, cc.p(-86-15, 0))
+                )
+        -- print("\n pairs handCount "..handCount)
+        -- for k, v in pairs(self.handCards) do
+        --     print(k, v)
+        --     print(v.cardValue)
+        -- end
+        self.handCards[handCount]:runAction(actionLast)
+
+        local action = cc.Sequence:create( 
+			cc.DelayTime:create(0.8),
+        	cc.CallFunc:create(
+                function ()
+                	self.nodeDachu[1]:setVisible(false)
+                	cardDataMgr.outNum[1] = cardDataMgr.outNum[1] + 1
+                	self.outCell[1][cardDataMgr.outNum[1]]:setVisible(true)
+                	self.outCellFace[1][cardDataMgr.outNum[1]]:loadTexture(outValueSave..".png")
+       			end)
+        )   
+
+        self.nodeDachu[1]:runAction(action)
+				
+	end
+	return outValueSave
+end
+
+--获取手牌的暗杠牌值
+function CardManager:getAGangValue(cardValue)
+
+    local tbCardNum = {} --下标为牌值， 值为个数
+    for i=1,75  do
+        tbCardNum[i] = 0
+    end
+    for i=1,#cardDataMgr.handValues do
+        tbCardNum[cardDataMgr.handValues[i]] = tbCardNum[cardDataMgr.handValues[i]] + 1
+    end
+    tbCardNum[cardValue] = tbCardNum[cardValue] + 1
+
+    for i=1, 75 do
+        if tbCardNum[i] == 4 then
+
+            return i
+        end
+
+    end
+end
+
+--获取碰杠的牌值
+function CardManager:getPGangValue(cardValue )
+    local pengNum =  cardDataMgr.pengNum[1]
+    for i=1,pengNum do
+        for j=1, #cardDataMgr.handValues do
+            if cardDataMgr.pengValue[1][i] == cardDataMgr.handValues[j] then   --手牌
+                 return cardDataMgr.handValues[j]
+            end 
+            if cardValue == cardDataMgr.pengValue[1][i] then  --抓的一张
+                return cardValue
+            end
+        end
+    end
+end
+
+--抓一张牌(含暗杠，碰杠，自摸消息通知)
+function CardManager:drawCard(cardZhua )
+	local svrChair = cardZhua.wCurrentUser
+	local clientChair = dataMgr.chair[svrChair + 1]
+	cardDataMgr.currentClient = clientChair
+
+    local playlayer = layerMgr:getLayer(layerMgr.layIndex.PlayLayer)
+    --补花
+	cardDataMgr.huaNum[clientChair] = cardDataMgr.huaNum[clientChair] + cardZhua.cbHuaCount
+   
+
+
+	for i=1,cardZhua.cbHuaCount do
+		table.insert(cardDataMgr.huaValue[clientChair],  cardZhua.cbHuaCardData[i])
+	end
+	playlayer.txtHuaNum[clientChair]:setString(cardDataMgr.huaNum[clientChair])
+	
+    --牌堆
+    cardDataMgr.totalOutNum = cardDataMgr.totalOutNum + 1
+	self.wallCell[cardDataMgr.totalOutNum]:setVisible(false)
+
+    --cardDataMgr.totalOutNum = cardDataMgr.totalOutNum + cardZhua.cbHuaCount + 1  --总牌加上补花 + 1
+    playlayer.txtLeftCard:setString(tostring(144 - cardDataMgr.totalOutNum))  --剩余牌
+
+    if clientChair == 1 then  --自己
+        local cardv = cardZhua.cbCardData  --牌值
+        self:createCardDraw(cardv)
+
+       -- playlayer.actCard = cardv   --将抓的牌值存起来，在点击按钮时发送给服务器
+
+        print("\n drawcard option")
+        local actOption =  girl.getBitTable( cardZhua.cbActionMask ) 
+        for i=1,8 do
+            print(" "..actOption[i])
+        end
+
+        local haveOption = 0  --  1有操作, 0 没有
+        if actOption[3] == 1 then   --暗杠
+            playlayer.btnActions[2]:setVisible(true)
+            playlayer.gangSaveValue = 4
+            haveOption = 1
+            playlayer.actCard = self:getAGangValue(cardv)
+            print("\n\n\nanGang value "..playlayer.actCard)
+        end
+        if actOption[4] == 1 then    --碰杠
+            playlayer.btnActions[2]:setVisible(true)
+            playlayer.gangSaveValue = 8
+            haveOption = 1
+            playlayer.actCard = self:getPGangValue(cardv)
+            print("\n\n\nPGang value "..playlayer.actCard)
+        end
+
+        if actOption[6] == 1 then   --自摸
+            playlayer.btnActions[4]:setVisible(true)
+            haveOption = 1
+            playlayer.actCard = cardv
+        end
+
+        if haveOption == 1 then
+            playlayer.btnActions[5]:setVisible(true) 
+            playlayer:whichTurn(1)
+        else
+        --没有操作，摸牌后打开触摸
+            cardDataMgr.outType = 0  --摸牌
+            self.imgTouchCard:setTouchEnabled(true)
+            playlayer:whichTurn(1)
+        end
+    else      --其他人显示14张可见
+        self.stndCell[clientChair][14]:setVisible(true)
+        playlayer:whichTurn(clientChair)  --轮到谁打，开定时器
+    end
+end
+
+--收到玩家出牌
 function CardManager:rcvOutCard(outCard )
     local clientChair = dataMgr.chair[outCard.wOutCardUser + 1] --svrChair
-    if clientChair == 1 then   --收到字节出牌，直接退出
+    --关闭定时器
+    local playlayer = layerMgr:getLayer(layerMgr.layIndex.PlayLayer)
+	playlayer:stopClock()
+
+    if clientChair == 1 then   --收到自己出牌，直接退出
     	return
     end
     local outValue = outCard.bOutCardData
     self.nodeDachu[clientChair]:setVisible(true)
 	self.imgBigDachu[clientChair]:loadTexture(outValue..".png")
 	self.stndCell[clientChair][14]:setVisible(false)
-	local delay1 = cc.DelayTime:create(0.4)
+	
+    local delay1 = cc.DelayTime:create(0.4)
 	local delay2 = cc.DelayTime:create(0.4)
     local action = cc.Sequence:create(delay1, 
 		delay2,
@@ -412,22 +546,24 @@ function CardManager:createCardDraw(cardValue )
 	self.cardDraw = cardNode.create(cardValue)
 	self.cardDraw:setPositionX(girl.posx[14])
 	self.stndNode[1]:addChild(self.cardDraw)
-	self.imgTouchCard:setTouchEnabled(true)
-	cardDataMgr.outType = 0  --摸牌
+    print(cardValue)
+    print("cardDraw "..self.cardDraw.cardValue)
+
 end
 
 
-function CardManager:inithandCards(cardValues, drawCardValue)
+function CardManager:inithandCards(drawCardValue)
 	self.handCards = {}    --创建的节点，打出去和碰出去的不算
 	--local cardValues = {25, 18, 1, 2, 3, 8, 5, 5, 7, 9, 40, 41, 52, 74}
-	table.sort(cardValues)
+	table.sort(cardDataMgr.handValues)
 
 	for i=1,13 do
-		self.handCards[i] = cardNode.create(cardValues[i])
-		cardDataMgr.handValues[i] = cardValues[i]
+		self.handCards[i] = cardNode.create(cardDataMgr.handValues[i])
 		self.handCards[i]:setPositionX(girl.posx[i])
 
 		self.stndNode[1]:addChild(self.handCards[i])
+        --self.stndNode[1]:retain()   
+--added by caoguoping
 		--self.stndNode[1]:retain()
 		self.handCards[i].sn = i
 		self.handCards[i].clickTimes = 0
@@ -443,9 +579,10 @@ function CardManager:inithandCards(cardValues, drawCardValue)
 	end
 
 	if drawCardValue ~= 0 then
+        self.imgTouchCard:setTouchEnabled(true)  --庄家开启触摸
 		self:createCardDraw(drawCardValue)	
-	else
-		self.imgTouchCard:setTouchEnabled(false)
+	-- else
+	-- 	self.imgTouchCard:setTouchEnabled(false)  --不是庄家禁止触摸
 	end
 
 end

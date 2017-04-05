@@ -173,6 +173,35 @@ function girl.getBitTable( byteValue )
 end
 
 
+--获取DWORD的位第一位为低位(1, 32)
+function girl.getDWORDTable( byteValue )
+    local bitTable = {}
+    local tmp = byteValue
+    for i=1,32 do
+         bitTable[i] = tmp % 2
+         if i ~= 32 then
+             tmp = tmp - bitTable[i]
+             tmp = tmp / 2
+         end
+         --print("bit "..i.." "..bitTable[i])
+    end
+    return bitTable
+end
+
+--判断是否是牌值(不包括花牌)
+function girl.isCardValue(value)
+    if  (value >= 1 and value <= 9)   or
+        (value >= 17 and value <= 25) or
+        ( value >= 33 and value <= 41) or
+        ( value >= 49 and value <= 52)
+        then  return true
+
+    else
+        return false
+    end
+
+end
+
 --获取一个新数值在table中的索引，（theTable已经从小到大排列)
 function girl.getTableSortIndex(theTable, value )
     local index = 1

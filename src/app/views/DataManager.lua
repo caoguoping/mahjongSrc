@@ -38,6 +38,11 @@ function DataManager:init()
     [20] = 
     [21] = 
     ]]
+
+--playerStatus
+    --0, 游戏前，   1, 游戏中，    2，   游戏结束
+    self.playerStatus = 0
+
 --myBaseData
     self.myBaseData = {}
     --[[
@@ -101,12 +106,21 @@ function DataManager:init()
             2
         1        3
             0
-    client
+    client（固定不变)
             3
         2        4
-            1    
+            1
+
+    direction(每局都变),  --下标为客户端ID ， 值为方位
+              1(东)
+        2(南)        4
+              3
+
+    
+
     ]]
     self.chair = {}  
+    self.direction = {}  --东南西北（1， 2， 3， 4) 东为庄家
 --roomSet
     self.roomSet = {} 
      --[[
@@ -128,6 +142,13 @@ function DataManager:init()
     bIsCreate     1:创建 0:加入
     dwRoomNum     输入的房间号或算好的房间号
     ]] 
+
+    self.gameEnd = {}
+    --[[
+    
+    ]]
+    self.timeLeft = 0     --出牌剩余时间
+    self.schedulerID = 0   --出牌剩余时间定时器
 
 end
 
