@@ -32,9 +32,11 @@ function CardDataManager:init()
     self.gangNum = {}      --杠的个数， 4家
     self.pengValue = {}  --碰的值 4家，每家3个相同只取一个  
     self.gangValue = {}   --杠的值 4家
+    self.pengGangValue = {}   --碰和杠的值的值，按顺序存的，每个只存一个   4家
     
     for i=1,4 do
         self.pengValue[i] = {}
+        self.pengGangValue[i] = {}
     end
     self.outNum = {} --打出的牌的个数，4家
     

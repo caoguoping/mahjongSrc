@@ -2,6 +2,8 @@
 local CURRENT_MODULE_NAME = ...
 local dataMgr     = import(".DataManager"):getInstance()
 local layerMgr = import(".LayerManager"):getInstance()
+local musicMgr = import(".MusicManager"):getInstance()
+
 
 
 local popUpBox = class("popUpBox", display.newLayer)
@@ -14,6 +16,8 @@ function popUpBox:ctor(str)
     self.txtInfo = rootNode:getChildByName("Text_info")
     self.btnCancel = rootNode:getChildByName("Button_cancel")
     self.btnOk = rootNode:getChildByName("Button_Ok")
+    
+    
 end
 function popUpBox.create(str)
     return popUpBox.new(str)

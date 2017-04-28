@@ -9,10 +9,13 @@ cc.FileUtils:getInstance():addSearchPath("res/csbPlay")
 cc.FileUtils:getInstance():addSearchPath("res/actionsCsb")
 cc.FileUtils:getInstance():addSearchPath("res/sound")
 
+print=release_print 
+
 require "config"
 require "cocos.init"
 
 require "app.views.Constants"
+require "app.views.SoundCnt"
 require "app.Extends"
 require "app.Functions"
 require "app.views.Strings"

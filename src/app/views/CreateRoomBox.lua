@@ -2,9 +2,12 @@
 local CURRENT_MODULE_NAME = ...
 local dataMgr     = import(".DataManager"):getInstance()
 local layerMgr = import(".LayerManager"):getInstance()
+local musicMgr = import(".MusicManager"):getInstance()
+
 
 local createRoomBox = class("createRoomBox", display.newLayer)
 function createRoomBox:ctor()
+     print("createRoomBox1:")
 --all Node
     local rootNode = cc.CSLoader:createNode("createRoom.csb"):addTo(self)
     self.rootNode = rootNode
@@ -231,12 +234,14 @@ function createRoomBox:ctor()
     ----***主界面关闭功能-------
     imgMask:onClicked(
         function (  )
+            musicMgr:playEffect("game_button_click.mp3", false)
             TTSocketClient:getInstance():closeMySocket(netTb.SocketType.Game)
             self:removeSelf()
         end
         )
     btnClose:onClicked(
         function (  )
+            musicMgr:playEffect("game_button_click.mp3", false)
              TTSocketClient:getInstance():closeMySocket(netTb.SocketType.Game)
             self:removeSelf()
         end)
@@ -648,34 +653,42 @@ function createRoomBox:ctor()
         end)
 
 
-
-
-  --***************数据获取——汇总*************
-
-    dataMgr.roomSet.wScore        = 200  --c_wScore
-    dataMgr.roomSet.wJieSuanLimit = 0    --c_wJieSuanLimit
-    dataMgr.roomSet.wBiXiaHu      = girl.getAllBitValue(tbBiaxiahu)
-    dataMgr.roomSet.bGangHouKaiHua= 1    --c_bGangHouKaiHua 
-    dataMgr.roomSet.bZaEr         = 0    --c_bZaEr  
-    dataMgr.roomSet.bFaFeng       = 1    --c_bFaFeng 
-    dataMgr.roomSet.bYaJue        = girl.getAllBitValue(tbYaJue)
-    dataMgr.roomSet.bJuShu        = 1    --c_bJuShu 
-    dataMgr.roomSet.bIsJinyunzi   = 1    --c_bIsJinyunzi 
-   --dataMgr.roomSet.bIsYaJue = c_bIsYaJue 
-
     layerMgr.LoginScene:addChild(self, 10000)
 
     btnCreate:onClicked(
-        --cgpTest
-        -- function ( )
-        --     layerMgr:removeBoxes(layerMgr.boxIndex.CreateRoomBox)
-        --     layerMgr:showLayer(layerMgr.layIndex.PlayLayer, params) 
-        --     local layer = layerMgr:getLayer(layerMgr.layIndex.PlayLayer, params)
-        --     layer:waitJoin()
-        -- end
 
 
         function (  )
+            musicMgr:playEffect("game_button_click.mp3", false)
+				--***************数据获取——汇总*************
+			dataMgr.roomSet.wScore        = c_wScore --200  --c_wScore
+			dataMgr.roomSet.wJieSuanLimit = c_wJieSuanLimit --0    --c_wJieSuanLimit
+			dataMgr.roomSet.wBiXiaHu      = girl.getAllBitValue(tbBiaxiahu)
+			dataMgr.roomSet.bGangHouKaiHua= c_bGangHouKaiHua --1    --c_bGangHouKaiHua 
+			dataMgr.roomSet.bZaEr         = c_bZaEr --0    --c_bZaEr  
+			dataMgr.roomSet.bFaFeng       = c_bFaFeng --1    --c_bFaFeng 
+			dataMgr.roomSet.bYaJue        = girl.getAllBitValue(tbYaJue)
+			dataMgr.roomSet.bJuShu        = c_bJuShu --1    --c_bJuShu	
+			dataMgr.roomSet.bIsJinyunzi   = c_bIsJinyunzi --1    --c_bIsJinyunzi 
+
+            local cardNum = girl.juToFang[dataMgr.roomSet.bJuShu]
+           
+--房卡不够，弹出
+            if dataMgr.prop[10] < cardNum then
+                local popupbox =  import(".popUpBox",CURRENT_MODULE_NAME).create() 
+                popupbox:setInfo(Strings.noRoomCard)
+                local btnOk, btnCancel  = popupbox:getBtns()
+                btnOk:onClicked(function (  )    --确定
+                    popupbox:remove()
+                    musicMgr:playEffect("game_button_click.mp3", false)
+                    layerMgr.boxes[layerMgr.boxIndex.TuiGuangBox] = import(".ShoppingBox",CURRENT_MODULE_NAME).create()
+                end)
+                btnCancel:onClicked(function (  )
+                    popupbox:remove()
+                end)
+                return
+            end
+
             local mainlayer = layerMgr:getLayer(layerMgr.layIndex.MainLayer)
             mainlayer:startGame(netTb.ip, netTb.port.game, netTb.SocketType.Game)  
             
@@ -686,7 +699,7 @@ end
 function createRoomBox:sendCreateRoom()
     --cgpTest
     print("\ncreateRoomBox")
-
+    
     local snd = DataSnd:create(1, 4)
     snd:wrWORD(dataMgr.roomSet.wScore        )
     snd:wrWORD(dataMgr.roomSet.wJieSuanLimit )
@@ -696,8 +709,13 @@ function createRoomBox:sendCreateRoom()
     snd:wrByte(dataMgr.roomSet.bFaFeng       )
     snd:wrByte(dataMgr.roomSet.bYaJue        )
     snd:wrByte(dataMgr.roomSet.bJuShu        )
+	print("dataMgr.roomSet.bJuShu:"..dataMgr.roomSet.bJuShu)
     snd:wrByte(dataMgr.roomSet.bIsJinyunzi   )
     --snd:wrByte(dataMgr.roomSet.bIsYaJue   )
+
+    print("setroomSet "..dataMgr.roomSet.wScore.."  "..dataMgr.roomSet.bJuShu.."  "..dataMgr.roomSet.bIsJinyunzi)
+
+
     snd:sendData(netTb.SocketType.Game)
     snd:release();
 end

@@ -188,18 +188,27 @@ function girl.getDWORDTable( byteValue )
     return bitTable
 end
 
+-- --判断是否是牌值(不包括花牌)
+-- function girl.isCardValue(value)
+--     if  (value >= 1 and value <= 9)   or
+--         (value >= 17 and value <= 25) or
+--         ( value >= 33 and value <= 41) or
+--         ( value >= 49 and value <= 52)
+--         then  return true
+
+--     else
+--         return false
+--     end
+
+-- end
+
 --判断是否是牌值(不包括花牌)
 function girl.isCardValue(value)
-    if  (value >= 1 and value <= 9)   or
-        (value >= 17 and value <= 25) or
-        ( value >= 33 and value <= 41) or
-        ( value >= 49 and value <= 52)
+    if  value >= 1 and value <= 75 
         then  return true
-
     else
         return false
     end
-
 end
 
 --获取一个新数值在table中的索引，（theTable已经从小到大排列)

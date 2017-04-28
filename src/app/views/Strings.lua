@@ -3,7 +3,17 @@ cc.exports.Strings = Strings or { }
 
 Strings.dismissRoom         = "开局前解散房间不会消耗房卡，是否解散房间"
 Strings.roomNotExist		= "您输入的房间号不存在，请重新输入，谢谢！"
-Strings.nullPanel 			= "亲，功能暂未开放，请耐心等待"
+Strings.funcNotOpen 			= "亲，功能暂未开放，请耐心等待"
+--Strings.noRoomCard 			= "您的房卡不足，请联系代理"
+Strings.noRoomCard 			= "您的房卡不足，请充值"
+Strings.createRoomFail 			= "创建房间失败"
+Strings.logingRoomFail 			= "登录失败"
+Strings.joinRoomFail			 = "加入房间失败"
+Strings.backRoomFangzhu          = "是否离开房间？（如果30分钟内没有正式开始游戏，系统将解散房间并退回房卡）"
+Strings.backRoomJoin          = "是否退出房间"
+Strings.connectGameFail        = "连接游戏服务器失败"
+Strings.connectLoginFail       = "连接登录服务器失败"
+
 
 
 -- 服务器错误码
