@@ -1,4 +1,5 @@
 local CURRENT_MODULE_NAME = ...
+require("src/cocos/cocos2d/json")
 
 local dataMgr     = import(".DataManager"):getInstance()
 local layerMgr = import(".LayerManager"):getInstance()
@@ -154,26 +155,27 @@ function LoginScene:onEnter()
     self.btnFast3 = btnFast3
     self.btnFast4 = btnFast4
   
-    if(device.platform == "windows") then 
-    --if true then        --广电测试
-        local xmlHttpReq = cc.XMLHttpRequest:new()
-        dataMgr:getUrlImgByClientId(xmlHttpReq, 1, "http://wx.qlogo.cn/mmopen/9r6A4jA1ibTQFTnZTABJGlfDj26ehcMc6GHq4L1krtwbwzmHLghzU2Kyw9UhqqktB6fdicwk5ianexFB89WNvyf8dZCY5NJUOPL/0",
-        function ()
-            if xmlHttpReq.readyState == 4 and (xmlHttpReq.status >= 200 and xmlHttpReq.status < 207) then
-                local fileData = xmlHttpReq.response
-                local fullFileName = cc.FileUtils:getInstance():getWritablePath()..xmlHttpReq._urlFileName
-                print("LUA-print"..fullFileName)
-                local file = io.open(fullFileName,"wb")
-                file:write(fileData)
-                file:close()
-            end
-        end
-        )
-    end
+    -- if(device.platform == "windows") then 
+    -- --if true then        --广电测试
+    --     local xmlHttpReq = cc.XMLHttpRequest:new()
+    --     dataMgr:getUrlImgByClientId(xmlHttpReq, 1, "http://wx.qlogo.cn/mmopen/9r6A4jA1ibTQFTnZTABJGlfDj26ehcMc6GHq4L1krtwbwzmHLghzU2Kyw9UhqqktB6fdicwk5ianexFB89WNvyf8dZCY5NJUOPL/0",
+    --     function ()
+    --         if xmlHttpReq.readyState == 4 and (xmlHttpReq.status >= 200 and xmlHttpReq.status < 207) then
+    --             local fileData = xmlHttpReq.response
+    --             local fullFileName = cc.FileUtils:getInstance():getWritablePath()..xmlHttpReq._urlFileName
+    --             print("LUA-print"..fullFileName)
+    --             local file = io.open(fullFileName,"wb")
+    --             file:write(fileData)
+    --             file:close()
+    --         end
+    --     end
+    --     )
+    -- end
 
     --预加载MainLayer
     local mainLayer = layerMgr:getLayer(layerMgr.layIndex.MainLayer)  
     mainLayer:setVisible(false)
+
 
 
 

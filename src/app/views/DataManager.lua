@@ -39,6 +39,25 @@ function DataManager:init()
     [21] = 
     ]]
 
+--微信相关
+    self.weChat = {}
+    --微信相关
+
+
+
+    self.weChat.appid = "wx28da1972ed3f2ee3"
+    self.weChat.mch_id = "1459102302"
+    self.weChat.nonce_str = ""     --随机数
+    self.weChat.body = "秦淮南京麻将-房卡充值"
+    self.weChat.out_trade_no = ""    --订单号
+    self.weChat.total_fee = "1"    --总金额
+    self.weChat.spbill_create_ip = "192.168.1.109"    --ip
+    self.weChat.trade_type = "APP"
+
+
+
+
+
 --playerStatus
     --0, 游戏前，   1, 游戏中，    2，   游戏结束
     self.playerStatus = 0

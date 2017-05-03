@@ -66,6 +66,9 @@ function NetWorkLogin:handleEventLogin( event)
     elseif wMainCmd == 3 then
             if wSubCmd == 502 then
                self:propChange(rcv)
+            --充值返回值  0：成功  ，   其他失败
+            elseif wSubCmd == 854 then
+                self:getChargeResult(rcv)
             end
     elseif wMainCmd == 500 then
         if wSubCmd == 501 then
@@ -76,6 +79,18 @@ function NetWorkLogin:handleEventLogin( event)
     -- --
     end
 end
+
+function NetWorkLogin:getChargeResult( rcv )
+    local result = rcv:readDWORD()
+    if result == 0 then
+        --成功
+        print("charge success!")
+    else
+        print("charge fail")
+    end
+
+end
+
 
 --背包
 function NetWorkLogin:getBagInfo( rcv )

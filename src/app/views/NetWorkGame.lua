@@ -74,6 +74,7 @@ function NetWorkGame:handleEventGame( event)
             self:getroomSet(rcv)
              print("\n\n getroomSet \n\n")
 
+        --房卡变动
         elseif wSubCmd == 351 then
             self:propChange(rcv)
         end
@@ -108,14 +109,24 @@ function NetWorkGame:handleEventGame( event)
             -----游戏结束后，获取游戏结束状态标志,游戏开始前需要将GameOverState置0
                 dataMgr.GameOverState = rcv:readByte() 
             elseif wSubCmd == 115 then
-                cardDataMgr.cardSend.isBiXiaHu      = rcv:readByte()               --1：比下胡  
-        end 
+                cardDataMgr.cardSend.isBiXiaHu      = rcv:readByte()               --1：比下胡 
+                local playLayer = layerMgr:getLayer(layerMgr.layIndex.PlayLayer, params)
+                --比下胡的显示
+                if cardDataMgr.cardSend.isBiXiaHu == 1 then
+                    playLayer.imgBixiahu:setVisible(true)
+                else
+                    playLayer.imgBixiahu:setVisible(false)
+                end
+
+
+            end 
 
         --114 ,byte  1,正常v,    2， 游戏中退出，    3， 结算退出
 
     --
     end
 end
+
 
 function NetWorkGame:propChange( rcv )
     local userId = rcv:readDWORD()

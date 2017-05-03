@@ -107,7 +107,7 @@ function PlayLayer:ctorUi(  )
             if "began" == event.name then
                 layerMgr.boxes[layerMgr.boxIndex.PersonInfoBox] = import(".PersonInfoBox",CURRENT_MODULE_NAME).create()
                 layerMgr.boxes[layerMgr.boxIndex.PersonInfoBox]:init(i, personInfoX[i], personInfoY[i])
-            elseif "ended" == event.name then
+            elseif "ended" == event.name or "cancelled" == event.name then
                 layerMgr:removeBoxes(layerMgr.boxIndex.PersonInfoBox)
             end
         end)
@@ -409,6 +409,8 @@ function PlayLayer:refresh( )
     self.txtClock:setString("0")
 
 
+
+
 end
 
 --等待其他人加入，在自己进去之后，收到
@@ -623,13 +625,6 @@ end
 
 --发牌
 function PlayLayer:sendCard(drawValue)
-    --比下胡的显示
-    if cardDataMgr.cardSend.isBiXiaHu == 1 then
-        self.imgBixiahu:setVisible(true)
-    else
-        self.imgBixiahu:setVisible(false)
-    end
-
 
 --    musicMgr:stopMusic()
     musicMgr:playEffect("saizi.mp3", false)

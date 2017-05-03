@@ -27,14 +27,15 @@ function MainLayer:ctor()
     began = 0,
     moved = 1,
     ended = 2,
-    canceled = 3,
+    cancelled = 3,
   ]] 
     self.imgHead:onTouch(
     function(event)
         if "began" == event.name then
             layerMgr.boxes[layerMgr.boxIndex.PersonInfoBox] = import(".PersonInfoBox",CURRENT_MODULE_NAME).create()
             layerMgr.boxes[layerMgr.boxIndex.PersonInfoBox]:init(1, 150, 100)
-        elseif "ended" == event.name then
+        elseif "ended" == event.name or "cancelled" == event.name      then
+            print("canceled")
             layerMgr:removeBoxes(layerMgr.boxIndex.PersonInfoBox)
         end
     end)

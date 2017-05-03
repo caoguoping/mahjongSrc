@@ -3,22 +3,28 @@ cc.exports.netTb       = netTb or {}
 cc.exports.fxString       = fxString or {}
 cc.exports.fxValue       = fxValue or {}
 
+
 netTb.SocketType = 
 {
 	Login  = 0,
 	Game   = 1,
 }
---netTb.ip = "192.168.3.15"
+--netTb.ip = "192.168.3.15"   --内网
+netTb.ip = "101.37.16.227"   --外网
 --netTb.ip = "192.168.3.19"
-netTb.ip = "101.37.20.36"
+--netTb.ip = "101.37.20.36"  --版署ip
+
+
 netTb.port =
 {
     login = 5050,
-    game = 5010,    --15 或 36
+    --game = 5010,  --版署
+    game = 5011,    --15 或 36
     --game = 5020,      -- 19 
     jinyunzi = 5010,
     changkaihuan = 5011,
 }
+
 
 --未缩小的原始尺寸
 girl.cardHeight = 130
@@ -62,7 +68,6 @@ girl.scorePosY[1] = 180
 girl.scorePosY[2] = 550
 girl.scorePosY[3] = 670
 girl.scorePosY[4] = 480
-
 
 
 fxString[1 ] = "胡牌"

@@ -76,11 +76,12 @@ function CardManager:initAllNodes( param )
 
             local outValueSave = 0
 
-            print("outType "..cardDataMgr.outType)
             if cardDataMgr.outType == 0 then
                 outValueSave = self:outDrawCard(sn)
+                print("outDrawCard()")
             else
                 outValueSave = self:outPengCard(sn)
+                print("outPengCard()")
             end
             print("\n  outValueSave "..outValueSave)
 

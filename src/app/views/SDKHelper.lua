@@ -32,6 +32,9 @@ function SDKHelper:handleSDKLogin( event)
     local sex = sdkData:readSex()
     local headimgurl = sdkData:readHeadimgurl()
     local city = sdkData:readCity()  --实际上是房间号
+    local hostip = sdkData:readIp()   --手机IP
+    dataMgr.weChat.spbill_create_ip = hostip
+
 
     local roomNum = tonumber(city)
     print("roomNum   in SDKHelper "..roomNum)
